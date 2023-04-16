@@ -1,47 +1,29 @@
-job('job-checkout') {
-    
-    scm {
-        github('sirMoksh/DevOpsClassCodes', 'main')
-    }
-      
-   publishers {
-        downstream 'job-compile', 'SUCCESS'
-    }
-    
-}
-job('job-compile'){
-   
-  scm {
-        github('sirMoksh/DevOpsClassCodes', 'main')
-    }
+pipeline {
+    agent any
 
-  steps{
-  maven('compile')
-  }
- publishers {
-        downstream 'job-test', 'SUCCESS'
-   }
-}
+    stages {
+        stage('Clone') {
+            steps {
+                git 'https://github.com/sirMoksh/ABC-Technologies.git'
+            }
+        }
 
-job('job-test'){
-   
-  scm {
-        github('sirMoksh/DevOpsClassCodes', 'main')
-    }
-  steps{
-   maven('test')
-  }
- publishers {
-        downstream 'job-package', 'SUCCESS'
-   }
-}
+        stage('Compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
 
-job('job-package'){
-   
-   scm {
-        github('sirMoksh/DevOpsClassCodes', 'main')
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
     }
-  steps{
-  maven('package')
-  }
 }
